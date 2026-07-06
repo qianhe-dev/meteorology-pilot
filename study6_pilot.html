@@ -269,22 +269,16 @@ function showChForm(topic){
     const tname=TOPIC_NAMES[topic];
     const items=[
         {id:"mc1",text:"刚才这一章，AI的语气和措辞让我感到温暖和被尊重",cat:"mc_sociability"},
-        {id:"mc2",text:"刚才这一章，AI在学习过程中鼓励了我，让我觉得自己能够学好",cat:"mc_sociability"},
+        {id:"mc2",text:"刚才这一章，AI的措辞是客观中立的",cat:"mc_sociability"},
         {id:"mc3",text:"刚才这一章，AI像是在主动引导我的理解",cat:"mc_agency"},
         {id:"mc4",text:"刚才这一章，AI像是有明确目标地组织我的学习",cat:"mc_agency"},
         {id:"icl1",text:"刚才这一章的主题内容对我来说非常复杂",cat:"icl",scale:"010"},
         {id:"icl2",text:"刚才这一章的核心概念对我来说非常难以理解",cat:"icl",scale:"010"},
         {id:"icl3",text:"刚才这一章知识点的定义和说明对我来说非常复杂",cat:"icl",scale:"010"},
-        {id:"cl1",text:"刚才的学习需要我集中精力思考",cat:"cogload"},
-        {id:"cl2",text:"刚才的学习内容让我感到有难度",cat:"cogload"},
-        {id:"cl3",text:"刚才的学习让我的大脑感到费力",cat:"cogload"},
         {id:"pe1",text:"此刻我感到专注",cat:"posemo"},
         {id:"pe2",text:"此刻我感到坚定",cat:"posemo"},
         {id:"pe3",text:"此刻我感到活跃",cat:"posemo"},
         {id:"pe4",text:"此刻我感到感兴趣",cat:"posemo"},
-        {id:"ps1",text:"刚才这一章中，即使我可能会答错，我也敢于尝试",cat:"psychsafe"},
-        {id:"ps2",text:"刚才这一章中，AI助手让我感到可以放心地学习",cat:"psychsafe"},
-        {id:"ps3",text:"刚才这一章中，向AI助手提问或求助不会让我感到有压力",cat:"psychsafe"},
         {id:"si1",text:"刚才这一章中，AI助手呈现内容的方式吸引了我的注意力",cat:"sit_interest"},
         {id:"si2",text:"刚才这一章的学习内容让我感到新奇有趣",cat:"sit_interest"},
         {id:"si3",text:"我对这一章涉及的话题产生了好奇心",cat:"sit_interest"},
@@ -381,10 +375,7 @@ function post_trans(){
 function post_eaas(){
     const eaasItems=[
         {id:1,dim:"sociability",text:"这个AI学习助手让我感到亲切"},{id:2,dim:"sociability",text:"这个AI学习助手像是一个友善的伙伴"},{id:3,dim:"sociability",text:"与这个学习助手交流让我感到自在"},{id:4,dim:"sociability",text:"这个AI学习助手能理解我的感受"},{id:5,dim:"sociability",text:"这个AI学习助手给人以温暖的感觉"},
-        {id:6,dim:"animacy",text:"这个AI学习助手看起来像是有生命的"},{id:7,dim:"animacy",text:"这个AI学习助手似乎有自己的意识"},{id:8,dim:"animacy",text:"这个AI学习助手给我一种真实存在的感觉"},{id:9,dim:"animacy",text:"我能感受到这个AI学习助手的个性"},{id:10,dim:"animacy",text:"这个AI学习助手像是活的"},
-        {id:11,dim:"agency",text:"这个AI学习助手的逻辑推理很清晰"},{id:12,dim:"agency",text:"这个AI学习助手展现出很强的专业能力"},{id:13,dim:"agency",text:"这个AI学习助手能主动引导我思考"},{id:14,dim:"agency",text:"这个AI学习助手似乎有自己的目标和意图"},{id:15,dim:"agency",text:"这个AI学习助手能自主地组织学习内容"},
-        {id:16,dim:"teaching_support",text:"这个AI学习助手提供的解释很有帮助"},{id:17,dim:"teaching_support",text:"这个AI学习助手能根据我的理解调整讲解"},{id:18,dim:"teaching_support",text:"这个AI学习助手的教学内容组织得很好"},{id:19,dim:"teaching_support",text:"这个AI学习助手能有效地帮助我理解新知识"},{id:20,dim:"teaching_support",text:"这个AI学习助手的反馈有助于我的学习"},{id:21,dim:"teaching_support",text:"这个AI学习助手能一步步引导我深入理解知识"},
-        {id:22,dim:"disturbance",text:"使用这个学习助手让我感到困扰"},{id:23,dim:"disturbance",text:"这个AI学习助手的存在分散了我的注意力"},{id:24,dim:"disturbance",text:"我觉得和这个AI学习助手交流很别扭"},{id:25,dim:"disturbance",text:"这个AI学习助手让我感到不自在"},{id:26,dim:"disturbance",text:"这个AI学习助手的反馈方式我不太习惯"},
+        {id:6,dim:"agency",text:"这个AI学习助手的逻辑推理很清晰"},{id:7,dim:"agency",text:"这个AI学习助手展现出很强的专业能力"},{id:8,dim:"agency",text:"这个AI学习助手能主动引导我思考"},{id:9,dim:"agency",text:"这个AI学习助手似乎有自己的目标和意图"},{id:10,dim:"agency",text:"这个AI学习助手能自主地组织学习内容"},
     ];
     const clItems=[
         {id:"cl1",text:"这次学习活动所涉及的主题内容对我来说非常复杂",dim:"intrinsic"},{id:"cl2",text:"这次学习活动所涉及的核心概念对我来说非常难以理解",dim:"intrinsic"},{id:"cl3",text:"这次学习活动所涉及的知识点的定义与说明对我来说非常复杂",dim:"intrinsic"},
@@ -399,15 +390,12 @@ function post_eaas(){
     clItems.forEach(it=>{h+=`<div class="q-row"><div class="q-lbl">${esc(it.text)}</div><div class="scale-r" style="gap:1px;">`;
         for(let v=0;v<=10;v++)h+=`<div class="scale-dot" style="width:26px;height:26px;font-size:0.68rem;" data-id="${it.id}" data-v="${v}" data-dim="${it.dim}" onclick="pickDot(this)">${v}</div>`;
         h+=`</div></div>`;});
-    h+=`<h3 style="font-size:1rem;color:#6366f1;margin:20px 0 6px;">整体评价</h3><div class="q-row"><div class="q-lbl">整体而言，这两个学习主题的内容对我来说有难度</div><div class="scale-r">`;
-    for(let v=1;v<=5;v++)h+=`<div class="scale-dot" data-id="ov1" data-v="${v}" onclick="pickDot(this)">${v}</div>`;
-    h+=`</div></div><div class="submit-zone"><button class="btn btn-p" id="btn-fin">完成</button><div class="err-msg" id="err-fin">请完成所有题目</div></div></div></div>`;
+    h+=`<div class="submit-zone"><button class="btn btn-p" id="btn-fin">完成</button><div class="err-msg" id="err-fin">请完成所有题目</div></div></div></div>`;
     A.innerHTML=h;
     document.getElementById("btn-fin").onclick=()=>{
         const eaasAns=[];for(const it of eaasItems){const d=document.querySelector(`.scale-dot.pick[data-id="${it.id}"]`);if(!d){document.getElementById("err-fin").style.display="block";return;}eaasAns.push({id:it.id,value:d.dataset.v,dim:it.dim});}
         const clAns=[];for(const it of clItems){const d=document.querySelector(`.scale-dot.pick[data-id="${it.id}"]`);if(!d){document.getElementById("err-fin").style.display="block";return;}clAns.push({id:it.id,value:d.dataset.v,dim:it.dim});}
-        const ov1=document.querySelector(`.scale-dot.pick[data-id="ov1"]`);if(!ov1){document.getElementById("err-fin").style.display="block";return;}
-        S.data.eaas=eaasAns;S.data.cognitiveLoad=clAns;S.data.overallDifficulty=ov1.dataset.v;
+        S.data.eaas=eaasAns;S.data.cognitiveLoad=clAns;
         S.data.order=ORDER;S.data.retention=S.retAnswers;S.data.transfer=S.transAnswers;
         try{_self.reportData({Q_00008:JSON.stringify(S.data)});}catch(e){console.log(e);}
         nav("post_end");
