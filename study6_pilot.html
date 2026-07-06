@@ -204,7 +204,7 @@ async function sendOneBubble(text,picName){
     msgs.appendChild(typing);scrollChat();
     await sleep(Math.min(900,Math.max(250,text.length*10)));
     let inner=esc(text);
-    if(picName)inner+=`<br><img src="assets/${picName}.png" alt="示意图" style="max-width:90%;border-radius:8px;margin-top:8px;border:1px solid #e2e8f0;" onerror="this.style.display='none'" onload="scrollChat()">`;
+    if(picName)inner+=`<br><img src="https://qianhe-dev.github.io/meteorology-pilot/${picName}.png" alt="示意图" style="max-width:90%;border-radius:8px;margin-top:8px;border:1px solid #e2e8f0;" onerror="this.style.display='none'" onload="scrollChat()">`;
     typing.querySelector(".bubble").innerHTML=inner;scrollChat();
     if(picName)await sleep(400);
 }
@@ -409,9 +409,7 @@ function post_eaas(){
         const ov1=document.querySelector(`.scale-dot.pick[data-id="ov1"]`);if(!ov1){document.getElementById("err-fin").style.display="block";return;}
         S.data.eaas=eaasAns;S.data.cognitiveLoad=clAns;S.data.overallDifficulty=ov1.dataset.v;
         S.data.order=ORDER;S.data.retention=S.retAnswers;S.data.transfer=S.transAnswers;
-        const blob=new Blob([JSON.stringify(S.data,null,2)],{type:"application/json"});
-        const a=document.createElement("a");a.href=URL.createObjectURL(blob);
-        a.download="pilot_data_"+new Date().toISOString().slice(0,10)+".json";a.click();
+        try{_self.reportData({Q_00008:JSON.stringify(S.data)});}catch(e){console.log(e);}
         nav("post_end");
     };
 }
