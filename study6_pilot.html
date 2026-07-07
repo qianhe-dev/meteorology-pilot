@@ -133,7 +133,7 @@ function buildSteps(topic){
 // ============================================================
 // 导航
 // ============================================================
-function nav(name){S.screen=name;const h={welcome,pre_demo,pre_atai,pre_know,lesson,post_ret,post_trans,post_eaas,post_end};if(h[name])h[name]();}
+function nav(name){S.screen=name;const h={welcome,pre_demo,pre_atai,pre_know,lesson,post_ret,post_trans,post_end};if(h[name])h[name]();}
 
 // ============================================================
 // 欢迎/前测（与之前一致，略简）
@@ -365,45 +365,17 @@ function post_trans(){
         S.transAnswers[topic]=answers;
         // 判断是否两个主题都完成了
         S.topicIdx++;
-        if(S.topicIdx>=2){nav("post_eaas");}else{nav("lesson");}
+        if(S.topicIdx>=2){nav("post_end");}else{nav("lesson");}
     };
 }
 
 // ============================================================
 // 后测：EAAS + 认知负荷
 // ============================================================
-function post_eaas(){
-    const eaasItems=[
-        {id:1,dim:"sociability",text:"这个AI学习助手让我感到亲切"},{id:2,dim:"sociability",text:"这个AI学习助手像是一个友善的伙伴"},{id:3,dim:"sociability",text:"与这个学习助手交流让我感到自在"},{id:4,dim:"sociability",text:"这个AI学习助手能理解我的感受"},{id:5,dim:"sociability",text:"这个AI学习助手给人以温暖的感觉"},
-        {id:6,dim:"agency",text:"这个AI学习助手的逻辑推理很清晰"},{id:7,dim:"agency",text:"这个AI学习助手展现出很强的专业能力"},{id:8,dim:"agency",text:"这个AI学习助手能主动引导我思考"},{id:9,dim:"agency",text:"这个AI学习助手似乎有自己的目标和意图"},{id:10,dim:"agency",text:"这个AI学习助手能自主地组织学习内容"},
-    ];
-    const clItems=[
-        {id:"cl1",text:"这次学习活动所涉及的主题内容对我来说非常复杂",dim:"intrinsic"},{id:"cl2",text:"这次学习活动所涉及的核心概念对我来说非常难以理解",dim:"intrinsic"},{id:"cl3",text:"这次学习活动所涉及的知识点的定义与说明对我来说非常复杂",dim:"intrinsic"},
-        {id:"cl4",text:"AI助手对内容的解释和说明方式让我非常难以理解",dim:"extraneous"},{id:"cl5",text:"AI助手的反馈和讲解方式对我的学习非常没有帮助",dim:"extraneous"},{id:"cl6",text:"AI助手呈现信息的方式让我很难弄清楚哪些是重点",dim:"extraneous"},
-        {id:"cl7",text:"这次学习活动真正加深了我对学习主题整体内容的理解",dim:"germane"},{id:"cl8",text:"这次学习活动真正加深了我对相关知识的理解",dim:"germane"},{id:"cl9",text:"这次学习活动真正加深了我对核心概念的理解",dim:"germane"},{id:"cl10",text:"这次学习活动真正加深了我对重要知识点定义与说明的理解",dim:"germane"},
-    ];
-    let h=`<div class="screen active scroll-screen"><div class="card"><h2>整体学习体验评价</h2><div class="sub">请根据你的整体交互体验作答。1=完全不同意，7=完全同意</div>`;
-    eaasItems.forEach(it=>{h+=`<div class="q-row"><div class="q-lbl">${it.id}. ${esc(it.text)}</div><div class="scale-r" style="gap:2px;">`;
-        for(let v=1;v<=7;v++)h+=`<div class="scale-dot" style="width:32px;height:32px;font-size:0.72rem;" data-id="${it.id}" data-v="${v}" data-dim="${it.dim}" onclick="pickDot(this)">${v}</div>`;
-        h+=`</div></div>`;});
-    h+=`<h3 style="font-size:1rem;color:#6366f1;margin:20px 0 6px;">认知负荷评价</h3><p style="font-size:0.78rem;color:#94a3b8;margin-bottom:12px;">0=完全不符合，10=完全符合</p>`;
-    clItems.forEach(it=>{h+=`<div class="q-row"><div class="q-lbl">${esc(it.text)}</div><div class="scale-r" style="gap:1px;">`;
-        for(let v=0;v<=10;v++)h+=`<div class="scale-dot" style="width:26px;height:26px;font-size:0.68rem;" data-id="${it.id}" data-v="${v}" data-dim="${it.dim}" onclick="pickDot(this)">${v}</div>`;
-        h+=`</div></div>`;});
-    h+=`<div class="submit-zone"><button class="btn btn-p" id="btn-fin">完成</button><div class="err-msg" id="err-fin">请完成所有题目</div></div></div></div>`;
-    A.innerHTML=h;
-    document.getElementById("btn-fin").onclick=()=>{
-        const eaasAns=[];for(const it of eaasItems){const d=document.querySelector(`.scale-dot.pick[data-id="${it.id}"]`);if(!d){document.getElementById("err-fin").style.display="block";return;}eaasAns.push({id:it.id,value:d.dataset.v,dim:it.dim});}
-        const clAns=[];for(const it of clItems){const d=document.querySelector(`.scale-dot.pick[data-id="${it.id}"]`);if(!d){document.getElementById("err-fin").style.display="block";return;}clAns.push({id:it.id,value:d.dataset.v,dim:it.dim});}
-        S.data.eaas=eaasAns;S.data.cognitiveLoad=clAns;
-        S.data.order=ORDER;S.data.retention=S.retAnswers;S.data.transfer=S.transAnswers;
-        try{_self.reportData({Q_00008:JSON.stringify(S.data)});}catch(e){console.log(e);}
-        nav("post_end");
-    };
-}
-
 function post_end(){
-    A.innerHTML=`<div class="screen active end-page"><div style="font-size:3rem;">✅</div><h2>实验完成</h2><p>数据已自动下载。感谢你的参与！</p></div>`;
+    S.data.order=ORDER;S.data.retention=S.retAnswers;S.data.transfer=S.transAnswers;
+    try{_self.reportData({Q_00008:JSON.stringify(S.data)});}catch(e){console.log(e);}
+    A.innerHTML=`<div class="screen active end-page"><div style="font-size:3rem;">✅</div><h2>实验完成，感谢你的参与！</h2><p style="font-size:1rem;color:#6366f1;font-weight:600;margin-top:12px;">在之后的选择题中，请选择选项D，用于确认你已完成本实验。</p></div>`;
 }
 
 // ============================================================
