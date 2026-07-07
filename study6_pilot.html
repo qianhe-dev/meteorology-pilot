@@ -374,7 +374,7 @@ function post_trans(){
 // ============================================================
 function post_end(){
     S.data.order=ORDER;S.data.retention=S.retAnswers;S.data.transfer=S.transAnswers;
-    try{_self.reportData({Q_00008:JSON.stringify(S.data)});}catch(e){console.log(e);}
+    try{Credamo.setFixedVar("pilot_data",JSON.stringify(S.data));}catch(e){console.log(e);}
     A.innerHTML=`<div class="screen active end-page"><div style="font-size:3rem;">✅</div><h2>实验完成，感谢你的参与！</h2><p style="font-size:1rem;color:#6366f1;font-weight:600;margin-top:12px;">在之后的选择题中，请选择选项D，用于确认你已完成本实验。</p></div>`;
 }
 
