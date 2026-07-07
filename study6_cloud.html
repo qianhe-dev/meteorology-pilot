@@ -162,11 +162,7 @@ async function advance(){
 function updateProg(){const fill=document.getElementById("prog");if(!fill)return;fill.style.width=Math.min(100,(S.stepIdx/Math.max(1,S.steps.length)*100))+"%";}
 
 function showEnd(){
-    A.innerHTML=`<div class="screen active end-page"><div style="font-size:3rem;">📚</div><h2>${TNAME} 学习完成</h2><p style="font-size:1rem;color:#6366f1;">请认真完成后续测试题目</p><div class="submit-zone"><button class="btn btn-p" onclick="done()">完成后续测试题</button></div></div>`;
-}
-
-function done(){
-    try{parent.Credamo&&parent.Credamo.nextPage&&parent.Credamo.nextPage();}catch(e){}
+    A.innerHTML=`<div class="screen active end-page"><div style="font-size:3rem;">📚</div><h2>${TNAME} 学习完成</h2><p style="font-size:1rem;color:#6366f1;">请认真完成后续测试题目</p></div>`;
 }
 
 // ============================================================
