@@ -374,15 +374,27 @@ function post_trans(){
 // ============================================================
 function post_end(){
     S.data.order=ORDER;S.data.retention=S.retAnswers;S.data.transfer=S.transAnswers;
-    try{Credamo.setFixedVar("pilot_data",JSON.stringify(S.data));}catch(e){console.log(e);}
-    A.innerHTML=`<div class="screen active end-page"><div style="font-size:3rem;">✅</div><h2>实验完成，感谢你的参与！</h2><p style="font-size:1rem;color:#6366f1;font-weight:600;margin-top:12px;">在之后的选择题中，请选择选项D，用于确认你已完成本实验。</p></div>`;
+    const d=S.data;
+    const getM=(arr,cat)=>{const vs=(arr||[]).filter(a=>a.category===cat).map(a=>parseFloat(a.value));return vs.length?(vs.reduce((s,v)=>s+v,0)/vs.length).toFixed(2):'?';};
+    const cICL=getM(d.chForms&&d.chForms.cloud,'icl'),tICL=getM(d.chForms&&d.chForms.thunder,'icl');
+    const retC=d.retAnswers&&d.retAnswers.cloud?d.retAnswers.cloud.filter(a=>a.isCorrect).length:'?';
+    const retT=d.retAnswers&&d.retAnswers.thunder?d.retAnswers.thunder.filter(a=>a.isCorrect).length:'?';
+    A.innerHTML=`<div class="screen active scroll-screen"><div class="card" style="text-align:center;"><h2>✅ 实验完成，感谢参与！</h2>
+        <div style="text-align:left;font-size:0.95rem;line-height:2;margin:16px 0;">
+        <p>云分类 · 内在认知负荷(0-10): <b style="font-size:1.2rem;">${cICL}</b></p>
+        <p>雷暴机制 · 内在认知负荷(0-10): <b style="font-size:1.2rem;">${tICL}</b></p>
+        <p>云分类 · 保持测验正确数( /10): <b style="font-size:1.2rem;">${retC}</b></p>
+        <p>雷暴机制 · 保持测验正确数( /10): <b style="font-size:1.2rem;">${retT}</b></p>
+        </div>
+        <p style="font-size:0.9rem;color:#6366f1;font-weight:600;">请将上方四个数字按顺序填入下方的文本框中：<br>云负荷 | 雷暴负荷 | 云正确数 | 雷暴正确数</p>
+        <p style="font-size:0.82rem;color:#94a3b8;">在之后的选择题中，请选择选项D，用于确认你已完成本实验。</p></div></div>`;
 }
 
 // ============================================================
 // 启动
 // ============================================================
-window.onerror=function(m,u,l){var a=document.getElementById("app");if(a)a.innerHTML='<div style="padding:40px;color:red;font-size:18px;"><h2>JS Error</h2><p>'+m+'</p><p>Line: '+l+'</p></div>';else document.body.innerHTML='<h1 style="color:red">'+m+' (line '+l+')</h1>';};
-setTimeout(function(){nav("welcome");},50);
+window.onerror=function(m,u,l){var a=document.getElementById("app");if(a)a.innerHTML='<div style="padding:40px;color:red;font-size:18px;"><h2>JS Error</h2><p>'+m+'</p><p>Line: '+l+'</p></div>';};
+nav("welcome");
 </script>
 </body>
 </html>
