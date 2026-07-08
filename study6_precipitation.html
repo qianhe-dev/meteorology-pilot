@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>降水类型学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#e8ecf1;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px;}
+#app{width:100%;max-width:1100px;height:98vh;max-height:none;background:#fff;border-radius:16px;box-shadow:0 0 40px rgba(0,0,0,0.06);overflow:hidden;display:flex;flex-direction:column;}
+.screen{display:none;flex-direction:column;height:100%;overflow:hidden;}
+.screen.active{display:flex;}
+.scroll-screen{overflow-y:auto;padding:28px 24px 80px;align-items:center;}
+.card{width:100%;max-width:620px;background:#fff;border-radius:14px;padding:32px 28px;box-shadow:0 1px 12px rgba(0,0,0,0.03);margin:0 auto;}
+.card h2{font-size:1.35rem;color:#1e293b;margin-bottom:6px;text-align:center;}
+.card .sub{font-size:0.92rem;color:#64748b;margin-bottom:20px;text-align:center;line-height:1.6;}
+.btn{padding:12px 30px;border:none;border-radius:22px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:1px;font-family:inherit;}
+.btn-p{background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;box-shadow:0 2px 8px rgba(99,102,241,0.12);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(99,102,241,0.22);}
+.submit-zone{text-align:center;margin-top:24px;}
+.chat-screen{background:#f8fafc;}
+.chat-header{padding:12px 16px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.chat-header .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#3b82f6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.9rem;font-weight:600;}
+.chat-header .name{font-weight:600;color:#1e293b;font-size:0.92rem;}
+.chapter-tag{text-align:center;padding:6px 0;flex-shrink:0;font-size:0.78rem;color:#94a3b8;background:#f1f5f9;border-bottom:1px solid #e2e8f0;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px;}
+.msg{display:flex;gap:8px;animation:fadeUp 0.35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.msg.ai{justify-content:flex-start;}
+.msg .msg-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;}
+.msg.ai .msg-avatar{background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;}
+.msg .bubble{max-width:80%;padding:12px 16px;border-radius:14px;font-size:1rem;line-height:1.7;word-break:break-word;}
+.msg.ai .bubble{background:#fff;color:#334155;border:1px solid #e2e8f0;border-top-left-radius:4px;}
+.quiz-box{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:14px;margin-top:4px;}
+.quiz-box .q-text{font-weight:600;color:#1e293b;margin-bottom:10px;font-size:0.95rem;}
+.q-opt{display:block;width:100%;text-align:left;padding:10px 14px;margin-bottom:5px;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:0.92rem;color:#334155;transition:all 0.15s;font-family:inherit;}
+.q-opt:hover{border-color:#6366f1;background:#eef2ff;}
+.q-opt.chosen{background:#6366f1;color:#fff;border-color:#6366f1;font-weight:500;}
+.q-opt:disabled{cursor:default;}
+.q-opt.correct-ans{border-color:#22c55e;background:#f0fdf4;}
+.q-opt.wrong-ans{border-color:#ef4444;background:#fef2f2;}
+.quiz-box .q-submit{margin-top:8px;padding:8px 22px;background:#6366f1;color:#fff;border:none;border-radius:18px;cursor:pointer;font-size:0.85rem;font-weight:500;font-family:inherit;}
+.quiz-fb{margin-top:8px;padding:10px 12px;border-radius:8px;font-size:0.85rem;line-height:1.5;display:none;}
+.quiz-fb.show{display:block;}
+.quiz-fb.correct{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+.quiz-fb.incorrect{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;}
+.prog-bar{height:3px;background:#e2e8f0;flex-shrink:0;}
+.prog-bar .fill{height:100%;background:linear-gradient(90deg,#6366f1,#3b82f6);transition:width 0.4s;}
+.cont-bar{padding:10px 16px;background:#fff;border-top:1px solid #e2e8f0;display:flex;justify-content:center;flex-shrink:0;}
+.cont-btn{padding:12px 40px;border:none;border-radius:20px;background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;cursor:pointer;font-size:1rem;font-weight:600;transition:all 0.2s;letter-spacing:2px;font-family:inherit;}
+.cont-btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(99,102,241,0.25);}
+.cont-btn:active{transform:scale(0.96);}
+.typing-indicator{display:flex;gap:4px;padding:12px 16px;align-items:center;}
+.typing-indicator span{width:8px;height:8px;border-radius:50%;background:#94a3b8;animation:dotBounce 1.4s infinite both;}
+.typing-indicator span:nth-child(1){animation-delay:0s;}
+.typing-indicator span:nth-child(2){animation-delay:0.2s;}
+.typing-indicator span:nth-child(3){animation-delay:0.4s;}
+@keyframes dotBounce{0%,80%,100%{opacity:0.2;transform:translateY(0);}40%{opacity:1;transform:translateY(-5px);}}
+.end-page{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px;text-align:center;gap:12px;}
+.end-page h2{font-size:1.4rem;color:#1e293b;}
+@media(max-width:780px){#app{max-width:100%;border-radius:0;height:100vh;max-height:none;}.msg .bubble{max-width:88%;}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const KNOW=[{"text": "大气降水是指从云中降落到地面的液态或固态水。根据形成机制和形态的不同，降水可分为雨、雪、冰雹、雾、露等多种类型。每种类型的形成条件各不相同，彼此独立。下图展示了主要降水类型。", "picture": "precipitation_overview"}, {"text": "雨是最常见的降水形式。当云中的微小水滴通过碰并增长逐渐变大，直到上升气流无法托住时，水滴在重力作用下从云中降落，形成降雨。雨滴的直径通常在0.5至6毫米之间。雨的形成只需要云中有足够的水滴和上升气流不足以托住它们这两个条件。", "picture": ""}, {"text": "雪的形成需要整层大气温度都低于冰点（0°C）。在这种条件下，水蒸气不经过液态阶段，直接凝华成冰晶。冰晶在下落过程中不断吸附周围水汽，逐渐生长为六角形的雪花。当雪花从云中飘落到地面且沿途温度一直低于0°C时，雪花不会融化，以雪的形态降落到地面。", "picture": ""}, {"text": "冰雹的形成需要强烈的上升气流。在积雨云中，一个小冰粒被上升气流带到云的上部——那里有大量过冷水滴（温度低于0°C但仍是液态）。过冷水滴碰到冰粒后立即冻结，在冰粒外面裹上一层冰壳。如果上升气流足够强，冰粒会被反复带到云的上部，每次循环都增加一层冰壳。经过多次上下循环后，冰雹越来越大，最终上升气流无法承载时，冰雹砸向地面。冰雹的直径可达数厘米。", "picture": ""}, {"text": "雾实际上就是接触地面的云。当近地面空气冷却到露点温度以下时，空气中的水汽凝结成大量微小水滴，悬浮在空中，使能见度降低到1公里以下。雾的形成只需要近地面空气充分冷却这一个关键条件。", "picture": ""}, {"text": "露是水汽在地面物体表面凝结成液态水的现象。在晴朗无风的夜晚，地面和植物表面通过辐射散失热量而迅速冷却。当表面温度降至露点以下时，接触这些表面的空气中所含的水汽就会凝结成小水珠，附着在叶片、草尖和石头上。露的形成只需要地面物体表面充分冷却这一个条件。", "picture": ""}, {"text": "需要指出的是，上述五种降水类型的形成机制彼此独立。理解雨的形成不需要理解雪的形成，理解冰雹不需要理解雾——每种类型有自己独立的形成条件和过程。", "picture": ""}, {"text": "总结一下区分这些降水类型的关键：看温度条件。整层大气低于0°C→雪；有强上升气流反复抬升→冰雹；云中水滴碰并增长→雨；近地面冷却凝结但悬浮空中→雾；近地面冷却凝结附着在物体表面→露。每种类型的判断依据是独立的。", "picture": ""}];
+const MC={"question": "以下哪种降水类型需要强上升气流反复抬升才能形成？", "choices": ["雨", "雪", "冰雹", "露"], "correct": ["C"], "explanation": "正确答案是冰雹。冰雹需要在积雨云中被强上升气流反复带入高空过冷水区，每次循环裹上一层冰壳，经过多次上下循环才能长大。雨、雪和露都不需要这个条件。"};
+const SLOTS=["你好，接下来我们学习降水的类型。大气中的降水有多种形式，每种都有自己独立的形成条件和过程。", "前面已经介绍了雨和雪的形成方式，接下来看看其他几种降水类型——它们各自有独特的形成机制。", "到这里，五种降水类型已经介绍完了。注意每种类型的形成条件和判断依据是独立的——理解其中一种不需要依赖其他类型。", "下面通过一道小练习来检验一下刚才的理解。", "下面呈现答案解释。", "降水的类型学习到此结束。请点击继续完成后续题目。"];
+const FB={"correct": "选择正确。", "incorrect": "选择错误。"};
+
+const S={stepIdx:0,steps:[],quizLocked:false};
+const A=document.getElementById("app");
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function buildSteps(){
+    const st=[];
+    st.push({type:"slot",content:SLOTS[0]});
+    const cut=Math.floor(KNOW.length/3);
+    for(let i=0;i<cut;i++)st.push({type:"knowledge",content:KNOW[i].text,picture:KNOW[i].picture||""});
+    st.push({type:"quiz",q:MC.question,choices:MC.choices,correct:MC.correct,explanation:MC.explanation,fbIntro:""});
+    st.push({type:"slot",content:SLOTS[1]});
+    for(let i=cut;i<Math.floor(KNOW.length*2/3);i++)st.push({type:"knowledge",content:KNOW[i].text,picture:KNOW[i].picture||""});
+    st.push({type:"slot",content:SLOTS[2]});
+    for(let i=Math.floor(KNOW.length*2/3);i<KNOW.length;i++)st.push({type:"knowledge",content:KNOW[i].text,picture:KNOW[i].picture||""});
+    st.push({type:"slot",content:SLOTS[3]});
+    st.push({type:"quiz",q:MC.question,choices:MC.choices,correct:MC.correct,explanation:MC.explanation,fbIntro:SLOTS[4]});
+    st.push({type:"slot",content:SLOTS[5]});
+    return st;
+}
+
+function scrollChat(){const msgs=document.getElementById("msgs");if(!msgs)return;requestAnimationFrame(()=>{msgs.scrollTop=msgs.scrollHeight;requestAnimationFrame(()=>{msgs.scrollTop=msgs.scrollHeight;});});}
+
+async function sendOneBubble(text,picName){
+    const msgs=document.getElementById("msgs");if(!msgs)return;
+    const typing=document.createElement("div");typing.className="msg ai";
+    typing.innerHTML=`<div class="msg-avatar">AI</div><div class="bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+    msgs.appendChild(typing);scrollChat();
+    await sleep(Math.min(900,Math.max(250,text.length*10)));
+    let inner=esc(text);
+    if(picName)inner+=`<br><img src="https://qianhe-dev.github.io/meteorology-pilot/${picName}.png" alt="示意图" style="max-width:90%;border-radius:8px;margin-top:8px;border:1px solid #e2e8f0;" onerror="this.style.display='none'" onload="scrollChat()">`;
+    typing.querySelector(".bubble").innerHTML=inner;scrollChat();
+    if(picName)await sleep(400);
+}
+
+async function addMsg(text,picName){if(!text)return;await sendOneBubble(text,picName);}
+function showCont(){const b=document.getElementById("cont-btn");if(b)b.style.display="";}
+function hideCont(){const b=document.getElementById("cont-btn");if(b)b.style.display="none";}
+
+function selPostOpt(el){
+    const box=el.closest(".quiz-box");if(!box)return;
+    box.querySelectorAll(".q-opt.chosen").forEach(o=>o.classList.remove("chosen"));
+    el.classList.add("chosen");
+}
+
+async function subQuiz(btn){
+    const box=btn.closest(".quiz-box");const chosen=box.querySelector(".q-opt.chosen");
+    if(S.quizLocked||!chosen)return;S.quizLocked=true;
+    const step=S.steps.filter(s=>s.type==="quiz")[0];
+    const sel=chosen.dataset.l;const isCorrect=step.correct.includes(sel);
+    box.querySelectorAll(".q-opt").forEach(o=>{o.disabled=true;if(step.correct.includes(o.dataset.l))o.classList.add("correct-ans");if(o.dataset.l===sel&&!isCorrect)o.classList.add("wrong-ans");});
+    btn.style.display="none";
+    if(!isCorrect){await addMsg(step.fbIntro);}
+    const fb=box.querySelector(".quiz-fb");fb.className="quiz-fb show "+(isCorrect?"correct":"incorrect");
+    fb.innerHTML=`<strong>${isCorrect?FB.correct:FB.incorrect}</strong>${step.explanation?"<br><br>"+esc(step.explanation):""}`;
+    S.quizDone=true;document.getElementById("msgs").scrollTop=document.getElementById("msgs").scrollHeight;
+    showCont();
+}
+
+function addQuiz(step){
+    const msgs=document.getElementById("msgs");if(!msgs)return;
+    let optH=`<div style="font-size:0.78rem;color:#94a3b8;margin-bottom:8px;">（请选择一个选项）</div>`;
+    optH+=step.choices.map((c,i)=>{const l=String.fromCharCode(65+i);return`<button class="q-opt" data-l="${l}" onclick="selPostOpt(this)">${l}. ${esc(c)}</button>`;}).join("");
+    const div=document.createElement("div");div.className="msg ai";
+    div.innerHTML=`<div class="msg-avatar">AI</div><div class="bubble"><div class="quiz-box"><div class="q-text">${esc(step.q)}</div>${optH}<button class="q-submit" onclick="subQuiz(this)">确认提交</button><div class="quiz-fb"></div></div></div>`;
+    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+
+async function startLesson(){
+    S.stepIdx=0;S.quizLocked=false;S.steps=buildSteps();
+    A.innerHTML=`<div class="screen active chat-screen"><div class="chat-header"><div class="avatar">AI</div><span class="name">AI 学习助手</span></div><div class="chapter-tag">降水的类型</div><div class="chat-msgs" id="msgs"></div><div class="prog-bar"><div class="fill" id="prog" style="width:0%"></div></div><div class="cont-bar"><button class="cont-btn" id="cont-btn" style="display:none;">继 续</button></div></div>`;
+    document.getElementById("cont-btn").onclick=()=>{hideCont();advance();};
+    await sleep(500);advance();
+}
+
+async function advance(){
+    if(S.stepIdx>=S.steps.length){showEnd();return;}
+    const step=S.steps[S.stepIdx];S.stepIdx++;
+    if(step.type==="slot"||step.type==="knowledge"){await addMsg(step.content,step.picture||null);showCont();}
+    else if(step.type==="quiz"){S.quizLocked=false;addQuiz(step);}
+    updateProg();
+}
+
+function updateProg(){const fill=document.getElementById("prog");if(!fill)return;fill.style.width=Math.min(100,(S.stepIdx/Math.max(1,S.steps.length)*100))+"%";}
+
+function showEnd(){
+    A.innerHTML=`<div class="screen active end-page"><div style="font-size:3rem;">📚</div><h2>降水的类型 学习完成</h2><p style="font-size:1rem;color:#6366f1;">请认真完成后续测试题目</p></div>`;
+}
+
+window.onerror=function(m,u,l){var a=document.getElementById("app");if(a)a.innerHTML='<div style="padding:40px;color:red;font-size:18px;"><h2>Error</h2><p>'+m+'</p><p>Line: '+l+'</p></div>';};
+startLesson();
+</script>
+</body>
+</html>
