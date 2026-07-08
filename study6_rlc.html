@@ -118,7 +118,7 @@ function selPostOpt(el){
 async function subQuiz(btn){
     const box=btn.closest(".quiz-box");const chosen=box.querySelector(".q-opt.chosen");
     if(S.quizLocked||!chosen)return;S.quizLocked=true;
-    const step=S.steps.filter(s=>s.type==="quiz")[0];
+    const step=S.quizData;  // 当前测验数据由addQuiz设置
     const sel=chosen.dataset.l;const isCorrect=step.correct.includes(sel);
     box.querySelectorAll(".q-opt").forEach(o=>{o.disabled=true;if(step.correct.includes(o.dataset.l))o.classList.add("correct-ans");if(o.dataset.l===sel&&!isCorrect)o.classList.add("wrong-ans");});
     btn.style.display="none";
@@ -130,6 +130,7 @@ async function subQuiz(btn){
 }
 
 function addQuiz(step){
+    S.quizData=step;  // 存储当前测验数据，供subQuiz读取
     const msgs=document.getElementById("msgs");if(!msgs)return;
     let optH=`<div style="font-size:0.78rem;color:#94a3b8;margin-bottom:8px;">（请选择一个选项）</div>`;
     optH+=step.choices.map((c,i)=>{const l=String.fromCharCode(65+i);return`<button class="q-opt" data-l="${l}" onclick="selPostOpt(this)">${l}. ${esc(c)}</button>`;}).join("");
